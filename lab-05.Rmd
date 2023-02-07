@@ -1,7 +1,7 @@
 ---
 title: "Lab 04 - La Quinta is Spanish for next to Denny's, Pt. 2"
-author: "Insert your name here"
-date: "Insert date here"
+author: "Ben Hardin"
+date: "2/7/2023"
 output: github_document
 ---
 
@@ -14,36 +14,90 @@ library(dsbox)
 
 ```{r load-data, message = FALSE}
 states <- read_csv("data/states.csv")
+dennys <- dennys
+laquinta <- laquinta
 ```
 
 ### Exercise 1
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+First, let's make a dataframe that only has Denny's locations in Alaska. Then, we can get the number of rows, which shows that there are 3 Denny's in Alaska.
+
+```{r dennys-alaska}
+dennys_ak <- dennys %>%
+  filter(state == "AK")
+nrow(dennys_ak)
+```
 
 ### Exercise 2
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
+Now, let's do the same for LaQuinta locations. It seems there are 2 Laquintas in Alaska.
+
+```{r laquinta-alaska}
+laquinta_ak <- laquinta %>%
+  filter(state == "AK")
+nrow(laquinta_ak)
+```
 
 ### Exercise 3
 
-...
+There are 3 Denny's and 2 LaQuintas, so there are 3*2 = 6 distances between Denny's and LaQuinta locations in Alaska. Let's join the two datasets we created, so we can calculate these distances.
+
+```{r joining-forces}
+dn_lq_ak <- full_join(dennys_ak, laquinta_ak, by = "state")
+dn_lq_ak
+```
 
 ### Exercise 4
 
-...
+There are 6 rows and 11 columns in the new dataset. The rows represent the pairings of Denny's and LaQuinta locations in Alaska. The columns represent the variables. There is only one variable for state, because that is the variable we joined the Denny's and LaQuinta datasets on. Then, we have two copies of every other location variable, with an added letter (either x or y), which tells us whether the observation came from the Denny's dataset (x) or Laquinta dataset (y)
 
 ### Exercise 5
 
-...
+The mutate function in tidyverse lets us add a new variable to our dataset.
+
+```{r inventing-haversine-function}
+haversine <- function(long1, lat1, long2, lat2, round = 3) {
+  # convert to radians
+  long1 = long1 * pi / 180
+  lat1  = lat1  * pi / 180
+  long2 = long2 * pi / 180
+  lat2  = lat2  * pi / 180
+  
+  R = 6371 # Earth mean radius in km
+  
+  a = sin((lat2 - lat1)/2)^2 + cos(lat1) * cos(lat2) * sin((long2 - long1)/2)^2
+  d = R * 2 * asin(sqrt(a))
+  
+  return( round(d,round) ) # distance in km
+}
+```
 
 ### Exercise 6
 
-...
+Alrighty, now that we have the two functions we need to do so, let's calculate the distances between each Denny's and LaQuinta.
 
-Add exercise headings as needed.
+```{r distance-variable}
+dn_lq_ak <- dn_lq_ak %>%
+  mutate(distance = haversine(longitude.x, latitude.x, longitude.y, latitude.y))
+```
+
+### Exercise 7
+
+Now we can calculate the minimum distance of a LaQuinta from each Denny's. 
+
+```{r min-distance}
+dn_lq_mindist <- dn_lq_ak %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+```
+
+### Exercise 8
+
+Let's summarize the distance between each Denny's in Alaska and each one's nearest LaQuinta Inn. The average distance from a given Denny's to a LaQuinta Inn is 4.4. For any given Denny's in Alaska, you are at most about 6 units(?) away from LaQuinta Inn; and if you're at the luckiest Denny's of all, you are only 2 units away from a LaQuinta. 
+
+```{r summarize-distances}
+dn_lq_mindist %>%
+  summary(closest)
+
+
+```
