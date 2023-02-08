@@ -86,7 +86,7 @@ dn_lq_ak <- dn_lq_ak %>%
 Now we can calculate the minimum distance of a LaQuinta from each Denny's. 
 
 ```{r min-distance}
-dn_lq_mindist <- dn_lq_ak %>%
+ak_mindist <- dn_lq_ak %>%
   group_by(address.x) %>%
   summarize(closest = min(distance))
 ```
@@ -96,8 +96,161 @@ dn_lq_mindist <- dn_lq_ak %>%
 Let's summarize the distance between each Denny's in Alaska and each one's nearest LaQuinta Inn. The average distance from a given Denny's to a LaQuinta Inn is 4.4. For any given Denny's in Alaska, you are at most about 6 units(?) away from LaQuinta Inn; and if you're at the luckiest Denny's of all, you are only 2 units away from a LaQuinta. 
 
 ```{r summarize-distances}
-dn_lq_mindist %>%
+ak_mindist %>%
   summary(closest)
 
-
+#getting factors ordered by closeness to LaQuinta
+ak_mindist <- ak_mindist %>%
+  arrange(closest) %>%
+  mutate(address.x = factor(address.x, levels = address.x))
+  
+#plotting
+ggplot(ak_mindist, aes(x = address.x, y = closest))+
+  geom_bar(stat="identity", color = "brown", fill = "gold")+
+  theme_bw()
 ```
+
+### Exercise 9
+
+Now, we repeat the whole process for North Carolina. [add commentary as needed]
+
+```{r dennys-nc}
+dennys_nc <- dennys %>%
+  filter(state == "NC")
+nrow(dennys_nc)
+```
+
+```{r laquinta-nc}
+laquinta_nc <- laquinta %>%
+  filter(state == "NC")
+nrow(laquinta_nc)
+```
+
+```{r joining-nc}
+dn_lq_nc <- full_join(dennys_nc, laquinta_nc, by = "state")
+dn_lq_nc
+```
+
+
+```{r distance-nc}
+dn_lq_nc <- dn_lq_nc %>%
+  mutate(distance = haversine(longitude.x, latitude.x, longitude.y, latitude.y))
+```
+
+
+```{r min-nc}
+nc_mindist <- dn_lq_nc %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+```
+
+
+```{r plotting-nc}
+nc_mindist <- nc_mindist %>%
+  arrange(closest) %>%
+  mutate(address.x = factor(address.x, levels = address.x))
+
+ggplot(nc_mindist, aes(x = address.x, y = closest))+
+  geom_bar(stat="identity", color = "brown", fill = "gold")+
+  theme_bw()
+
+#BEN - FIX X-AXIS VALUES
+```
+
+### Exercise 10
+
+Now, we repeat the whole process for Texas. [add commentary as needed]
+
+```{r dennys-tx}
+dennys_tx <- dennys %>%
+  filter(state == "TX")
+nrow(dennys_tx)
+```
+
+```{r laquinta-tx}
+laquinta_tx <- laquinta %>%
+  filter(state == "TX")
+nrow(laquinta_tx)
+```
+
+```{r joining-tx}
+dn_lq_tx <- full_join(dennys_tx, laquinta_tx, by = "state")
+dn_lq_tx
+```
+
+
+```{r distance-tx}
+dn_lq_tx <- dn_lq_tx %>%
+  mutate(distance = haversine(longitude.x, latitude.x, longitude.y, latitude.y))
+```
+
+
+```{r min-tx}
+tx_mindist <- dn_lq_tx %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+```
+
+
+```{r plotting-tx}
+tx_mindist <- tx_mindist %>%
+  arrange(closest) %>%
+  mutate(address.x = factor(address.x, levels = address.x))
+
+ggplot(tx_mindist, aes(x = address.x, y = closest))+
+  geom_bar(stat="identity", color = "brown", fill = "gold")+
+  theme_bw()
+
+#BEN - FIX X-AXIS VALUES
+```
+
+### Exercise 11
+
+Okay, now let's try it one more time with my home state, Mississippi
+
+```{r dennys-ms}
+dennys_ms <- dennys %>%
+  filter(state == "MS")
+nrow(dennys_ms)
+```
+
+```{r laquinta-ms}
+laquinta_ms <- laquinta %>%
+  filter(state == "MS")
+nrow(laquinta_ms)
+```
+
+```{r joining-ms}
+dn_lq_ms <- full_join(dennys_ms, laquinta_ms, by = "state")
+dn_lq_ms
+```
+
+
+```{r distance-ms}
+dn_lq_ms <- dn_lq_ms %>%
+  mutate(distance = haversine(longitude.x, latitude.x, longitude.y, latitude.y))
+```
+
+
+```{r min-ms}
+ms_mindist <- dn_lq_ms %>%
+  group_by(address.x) %>%
+  summarize(closest = min(distance))
+```
+
+
+```{r plotting-ms}
+ms_mindist <- ms_mindist %>%
+  arrange(closest) %>%
+  mutate(address.x = factor(address.x, levels = address.x))
+
+ggplot(ms_mindist, aes(x = address.x, y = closest))+
+  geom_bar(stat="identity", color = "brown", fill = "gold")+
+  theme_bw()
+
+#BEN - FIX X-AXIS VALUES
+```
+
+### Exercise 11
+
+[add commentary]
