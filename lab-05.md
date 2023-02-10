@@ -124,8 +124,12 @@ ak_mindist <- dn_lq_ak %>%
 Let’s summarize the distance between each Denny’s in Alaska and each
 one’s nearest LaQuinta Inn. The average distance from a given Denny’s to
 a LaQuinta Inn is 4.4. For any given Denny’s in Alaska, you are at most
-about 6 units(?) away from LaQuinta Inn; and if you’re at the luckiest
-Denny’s of all, you are only 2 units away from a LaQuinta.
+about 6 km away from LaQuinta Inn; and if you’re at the luckiest Denny’s
+of all, you are only 2 km away from a LaQuinta.
+
+I made a histogram to visualize the distribution of distances from each
+Denny’s and its nearest LaQuinta, rendered in beautiful Denny’s gold!
+It’s not too exciting, because there are only 3 locations…
 
 ``` r
 ak_mindist %>%
@@ -147,17 +151,25 @@ ak_mindist <- ak_mindist %>%
   mutate(address.x = factor(address.x, levels = address.x))
   
 #plotting
-ggplot(ak_mindist, aes(x = address.x, y = closest))+
-  geom_bar(stat="identity", color = "brown", fill = "gold")+
-  theme_bw()
+ggplot(ak_mindist, aes(x = closest))+
+  geom_histogram(color = "brown", fill = "gold")+
+  scale_y_continuous(
+    expand = c(0, 0),
+    limits = c(0, 2))+
+  theme_bw()+
+  labs(title = "Distribution of Denny's to LaQuinta distances in Alaska", y = "Count", x = "Distance between each Denny's and it's the nearest LaQuinta (km)")
 ```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
 ![](lab-05_files/figure-gfm/summarize-distances-1.png)<!-- -->
 
 ### Exercise 9
 
-Now, we repeat the whole process for North Carolina. \[add commentary as
-needed\]
+Now, we repeat the whole process for North Carolina. There’s a nicer
+selection of locations now, and we can see that there’s quite a spread,
+where some Denny’s have a LaQuinta very nearby, but a substantial number
+of Denny’s in NC are more than 100 km away from a LaQuinta.
 
 ``` r
 dennys_nc <- dennys %>%
@@ -212,20 +224,26 @@ nc_mindist <- nc_mindist %>%
   arrange(closest) %>%
   mutate(address.x = factor(address.x, levels = address.x))
 
-ggplot(nc_mindist, aes(x = address.x, y = closest))+
-  geom_bar(stat="identity", color = "brown", fill = "gold")+
-  theme_bw()
+ggplot(nc_mindist, aes(x = closest))+
+  geom_histogram(color = "brown", fill = "gold")+
+  scale_y_continuous(
+    expand = c(0, 0),
+    limits = c(0, 3.5))+
+  theme_bw()+
+  labs(title = "Distribution of Denny's to LaQuinta distances in North Carolina", y = "Count", x = "Distance between each Denny's and it's the nearest LaQuinta (km)")
 ```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
 ![](lab-05_files/figure-gfm/plotting-nc-1.png)<!-- -->
 
-``` r
-#BEN - FIX X-AXIS VALUES
-```
-
 ### Exercise 10
 
-Now, we repeat the whole process for Texas. \[add commentary as needed\]
+Now, we repeat the whole process for Texas. A couple of things are
+striking. First, there are a ton of Denny’s in Texas! Second, a huge
+chunk of the Denny’s in Texas are only a few kilometers away from a
+LaQuinta, and only a tiny few Denny’s are more than 20 km from a
+LaQuinta.
 
 ``` r
 dennys_tx <- dennys %>%
@@ -280,20 +298,24 @@ tx_mindist <- tx_mindist %>%
   arrange(closest) %>%
   mutate(address.x = factor(address.x, levels = address.x))
 
-ggplot(tx_mindist, aes(x = address.x, y = closest))+
-  geom_bar(stat="identity", color = "brown", fill = "gold")+
-  theme_bw()
+ggplot(tx_mindist, aes(x = closest))+
+  geom_histogram(binwidth = 1, color = "brown", fill = "gold")+
+  scale_y_continuous(
+    expand = c(0, 0),
+    limits = c(0, 40))+
+  theme_bw()+
+  labs(title = "Distribution of Denny's to LaQuinta distances in Texas", y = "Count", x = "Distance between each Denny's and it's the nearest LaQuinta (km)")
 ```
 
 ![](lab-05_files/figure-gfm/plotting-tx-1.png)<!-- -->
 
-``` r
-#BEN - FIX X-AXIS VALUES
-```
-
 ### Exercise 11
 
-Okay, now let’s try it one more time with my home state, Mississippi
+Okay, now let’s try it one more time with my home state, Mississippi.
+This one is a little bit like Alaska, because there aren’t very many
+Denny’s in Mississippi. Of those, it looks like a couple of them are
+quite close to a LaQuinta, one of them is about 20 km away, and the last
+one is more than 100 km away.
 
 ``` r
 dennys_ms <- dennys %>%
@@ -348,17 +370,22 @@ ms_mindist <- ms_mindist %>%
   arrange(closest) %>%
   mutate(address.x = factor(address.x, levels = address.x))
 
-ggplot(ms_mindist, aes(x = address.x, y = closest))+
-  geom_bar(stat="identity", color = "brown", fill = "gold")+
-  theme_bw()
+ggplot(ms_mindist, aes(x = closest))+
+  geom_histogram(color = "brown", fill = "gold")+
+  scale_y_continuous(
+    expand = c(0, 0),
+    limit = c(0, 2.1))+
+  theme_bw()+
+  labs(title = "Distribution of Denny's to LaQuinta distances in Mississippi", y = "Count", x = "Distance between each Denny's and it's the nearest LaQuinta")
 ```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
 ![](lab-05_files/figure-gfm/plotting-ms-1.png)<!-- -->
 
-``` r
-#BEN - FIX X-AXIS VALUES
-```
+### Exercise 12
 
-### Exercise 11
-
-\[add commentary\]
+Mitch Hedberg’s joke seems to hold the most true for Texas, because so
+many Denny’s are within 5 km of the nearest LaQuinta! Alaska is a close
+second, except there are so few Denny’s there that it seems kind of
+irrelevant.
